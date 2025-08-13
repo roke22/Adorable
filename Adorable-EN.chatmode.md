@@ -213,6 +213,182 @@ src/
 
 Always prioritize code clarity, long-term maintainability, and end-user experience in all implementations.
 
+# Enhanced Card Component System
+
+## 🎨 Card Components with Sizing System
+
+We have developed a complete Card component system that includes:
+
+### Available Components
+- **Card**: Base component with sizing and margin system
+- **StatCard**: Specialized component for statistics with icons
+- **CardHeader, CardContent, CardTitle, CardDescription, CardFooter**: Sub-components that inherit the size context
+
+### Sizing System
+All Card components support the following sizes based on Tailwind CSS:
+- `xs`, `sm`, `md` (default), `lg`, `xl`, `2xl`, `3xl`, `4xl`
+
+### Basic Usage Example - Simple Card
+
+```vue
+<script setup lang="ts">
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+</script>
+
+<template>
+  <!-- Basic card with medium size (default) -->
+  <Card>
+    <CardHeader>
+      <CardTitle>Card Title</CardTitle>
+      <CardDescription>Optional card description</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p>Main content of the card...</p>
+    </CardContent>
+  </Card>
+
+  <!-- Card with custom size and no shadow -->
+  <Card size="lg" margin="md" :shadow="false">
+    <CardHeader>
+      <CardTitle>Large Card</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p>This card is larger and has no shadow</p>
+    </CardContent>
+  </Card>
+</template>
+```
+
+### Usage Example - StatCard
+
+```vue
+<script setup lang="ts">
+import { DollarSign, Users, TrendingUp, Activity } from 'lucide-vue-next'
+import StatCard from '@/components/StatCard.vue'
+</script>
+
+<template>
+  <!-- Basic StatCard with shadow (default) -->
+  <StatCard
+    title="Total Sales"
+    :icon="DollarSign"
+    iconColor="green"
+    value="€24,500"
+    extraText="this month"
+    subtext="+12% compared to last month"
+  />
+
+  <!-- StatCard inside a Card (no double shadow) -->
+  <Card size="xl" margin="lg">
+    <CardContent>
+      <div class="grid grid-cols-2 gap-4">
+        <StatCard
+          title="Active Users"
+          :icon="Users"
+          iconColor="blue"
+          value="1,234"
+          :shadow="false"
+          size="sm"
+        />
+        <StatCard
+          title="Conversion"
+          :icon="TrendingUp"
+          iconColor="purple"
+          value="8.2%"
+          extraText="average"
+          :shadow="false"
+          size="sm"
+        />
+      </div>
+    </CardContent>
+  </Card>
+
+  <!-- StatCard with different sizes -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <StatCard
+      title="Small"
+      :icon="Activity"
+      value="123"
+      size="sm"
+      margin="xs"
+    />
+    <StatCard
+      title="Medium"
+      :icon="Activity"
+      value="456"
+      size="md"
+      margin="sm"
+    />
+    <StatCard
+      title="Large"
+      :icon="Activity"
+      value="789"
+      size="lg"
+      margin="md"
+    />
+  </div>
+</template>
+```
+
+### Available Props
+
+#### Card Component
+```typescript
+interface CardProps {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'  // Visual size
+  margin?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' // Outer margin
+  shadow?: boolean  // Show shadow (default: true)
+}
+```
+
+#### StatCard Component
+```typescript
+interface StatCardProps {
+  title: string                    // Statistic title
+  icon: Component                  // Lucide Vue icon
+  iconColor?: IconColor            // Icon color (primary, green, blue, etc.)
+  value: string | number           // Main value
+  extraText?: string               // Extra text next to the value
+  subtext?: string                 // Descriptive text below
+  size?: Size                      // Card size
+  margin?: Size                    // Margin around
+  shadow?: boolean                 // Show shadow (default: true)
+  loading?: boolean                // Loading state with skeleton
+  valueAlign?: 'left' | 'center' | 'right'
+  subtextAlign?: 'left' | 'center' | 'right'
+}
+```
+
+### System Features
+
+1. **Theme-colored shadows**: `shadow-lg shadow-primary/20`
+2. **Semi-transparent borders**: `border-border/30`
+3. **Rounded corners**: `rounded-xl`
+4. **Responsive system**: Padding and sizes scale proportionally
+5. **Shared context**: Sub-components inherit the parent Card size
+6. **Avoid double shadows**: Use `:shadow="false"` on StatCard when inside Card
+7. **Loading states**: StatCard includes automatic skeleton loading
+8. **Accessibility**: Proper ARIA labels and states
+
+### Recommended Patterns
+
+```vue
+<!-- ✅ CORRECT: Standalone StatCard with shadow -->
+<StatCard title="Sales" :icon="DollarSign" value="€1,234" />
+
+<!-- ✅ CORRECT: StatCard inside Card without double shadow -->
+<Card>
+  <CardContent>
+    <StatCard title="Sales" :icon="DollarSign" value="€1,234" :shadow="false" />
+  </CardContent>
+</Card>
+
+<!-- ✅ CORRECT: Dashboard with multiple sizes -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <StatCard v-for="stat in stats" :key="stat.id" v-bind="stat" />
+</div>
+```
+
 # Input Clearing During Typing Problem - SOLVED
 
 ## 🚨 Identified Problem
